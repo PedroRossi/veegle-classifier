@@ -40,11 +40,10 @@ class Classifier:
         if self.name not in classifiers_dicitionary:
             raise Exception('Classifier not found')
         pipeline.append(('clf', classifiers_dicitionary[self.name]))
-        classifier = Pipeline(pipeline)
-        data = train_classifiers(15, self.parsed, self.evaluation, 0.3, [classifier])
-        self.classifier = data['classifier']
-        self.performance = data['data']
+        self.classifier = Pipeline(pipeline)
+        data = train_classifiers(15, self.parsed, self.evaluation, 0.3, [self.classifier])
+        self.performance = data
 
-    def predict_from_file_path(path):
+    def predict_from_file_path(self, path):
         text = get_text_from_html(path)
         return True if self.classifier.predict(text) else False

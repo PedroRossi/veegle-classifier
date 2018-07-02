@@ -1,37 +1,37 @@
 import numpy as np
-import pandas as pd
+from sklearn.pipeline import Pipeline
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, TfidfTransformer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import SGDClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
+from classifier import Classifier
+import threading
+
+def test_classifier(name):
+    a = Classifier(name, False)
+    print('cv_disabled: ' + name + ' - ' + str(np.mean(a.performance['accuracy'])))
+    a = Classifier(name, True)
+    print('cv_enabled: ' + name + ' - ' + str(np.mean(a.performance['accuracy'])))
+
 
 def main():
-    classifiers1 = [
-        Pipeline([('vect', CountVectorizer()), ('tfidf', TfidfTransformer()), ('clf', MultinomialNB())]),
-        Pipeline([('vect', CountVectorizer()), ('tfidf', TfidfTransformer()), ('clf', SGDClassifier(loss='hinge',penalty='l1', max_iter=1000, tol=None))]),
-        Pipeline([('vect', CountVectorizer()), ('tfidf', TfidfTransformer()), ('clf', DecisionTreeClassifier())]),
-        Pipeline([('vect', CountVectorizer()), ('tfidf', TfidfTransformer()), ('clf', LogisticRegression())]),
-        Pipeline([('vect', CountVectorizer()), ('tfidf', TfidfTransformer()), ('clf', MLPClassifier())]),
-        Pipeline([('vect', CountVectorizer()), ('tfidf', TfidfTransformer()), ('clf', SVC())])
-    ]
+    classifiers = ['sgc', 'naive_bayes', 'decision_tree', 'logistic_regression', 'mlp', 'svc']
 
-    cv = CountVectorizer(max_df=0.9, max_features=10000)
-    classifiers2 = [
-        Pipeline([('vect', cv), ('tfidf', TfidfTransformer()), ('clf', MultinomialNB())]),
-        Pipeline([('vect', cv), ('tfidf', TfidfTransformer()), ('clf', SGDClassifier(loss='hinge',penalty='l1', max_iter=1000, tol=None))]),
-        Pipeline([('vect', cv), ('tfidf', TfidfTransformer()), ('clf', DecisionTreeClassifier())]),
-        Pipeline([('vect', cv), ('tfidf', TfidfTransformer()), ('clf', LogisticRegression())]),
-        Pipeline([('vect', cv), ('tfidf', TfidfTransformer()), ('clf', MLPClassifier())]),
-        Pipeline([('vect', cv), ('tfidf', TfidfTransformer()), ('clf', SVC())])
-    ]
+    threads = []
 
-    col = ['SGC', 'Naive Bayes', 'DecisionTree', 'LogisticRegression', 'MLP', 'SVC']
+    for c in classifiers:
+        t = threading.Thread(
+            target=test_classifier,
+            args=(c,)
+        )
+        threads.append(t)
+        t.start()
 
-    obj = train(15, parsed, y, 0.3, classifiers1)
-    acuracia = obj['accuracy']
-    acuracia_pd = pd.DataFrame(acuracia, columns = col)
-    print(np.mean(acuracia_pd))
-
-    obj = train(15, parsed, y, 0.3, classifiers2)
-    acuracia = obj['accuracy']
-    acuracia_pd = pd.DataFrame(acuracia, columns = col)
-    print(np.mean(acuracia_pd))
+    for t in threads:
+        t.join()
 
 if __name__ == '__main__':
     main()
