@@ -46,4 +46,4 @@ class Classifier:
 
     def predict_from_file_path(self, path):
         text = get_text_from_html(path)
-        return True if self.classifier.predict(text) else False
+        return self.classifier.predict([text])[0] is 1
