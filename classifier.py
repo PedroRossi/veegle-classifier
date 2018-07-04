@@ -1,4 +1,4 @@
-from parser import parse_samples, get_text_from_html
+from parser import get_text_from_html
 from train import train_classifiers
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, TfidfTransformer
 from sklearn.pipeline import Pipeline
@@ -11,19 +11,14 @@ from sklearn.svm import SVC
 
 class Classifier:
 
-    def __init__(self, name, cv_enabled):
+    def __init__(self, name, cv_enabled, parsed, evaluation):
         self.name = name
         self.cv = CountVectorizer(max_df=0.9, max_features=10000) if cv_enabled else CountVectorizer()
-        self.parsed = []
-        self.evaluation = []
+        self.parsed = parsed
+        self.evaluation = evaluation
         self.classifier = None
         self.performance = None
-        self.load_data()
         self.train()
-
-    def load_data(self):
-        parse_samples('pages/positivos', self.parsed, self.evaluation, 1)
-        parse_samples('pages/negativos', self.parsed, self.evaluation, 0)
 
     def train(self):
         pipeline = []
@@ -46,4 +41,4 @@ class Classifier:
 
     def predict_from_file_path(self, path):
         text = get_text_from_html(path)
-        return self.classifier.predict([text])[0] is 1
+        return self.classifier.predict([text])[0]
