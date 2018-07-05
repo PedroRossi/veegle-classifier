@@ -1,5 +1,5 @@
-from parser import get_text_from_html
-from train import train_classifiers
+from .parser import get_text_from_html
+from .train import train_classifiers
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, TfidfTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.naive_bayes import MultinomialNB

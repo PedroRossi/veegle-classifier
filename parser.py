@@ -3,9 +3,6 @@ from string import punctuation
 import nltk
 import os
 
-nltk.download('stopwords')
-nltk.download('rslp')
-
 def parse_samples(path, parsed_list, y, type_of_sample):
     for filename in os.listdir(path):
         full_path = os.path.join(path, filename)
@@ -25,7 +22,8 @@ def get_text_from_html(path, remove_stopwords = True, stemming_enabled = False):
         h_tags = soup.find_all('h'+str(i))
         for x in h_tags:
             s += x.text.split(' ')
-    s += soup.title.string.split(' ')
+    title = soup.title.string.split(' ')
+    s += title
     f.close()
     dictionary = list(punctuation)
     dictionary.append('placeholder')

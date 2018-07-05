@@ -42,6 +42,8 @@ def test():
         t.join()
 
 def main():
+    test()
+    return
     classifier = Classifier('naive_bayes', False, parsed, y)
     print('Accuracy: '+str(np.mean(classifier.performance['accuracy'])))
     print('Time: '+str(np.mean(classifier.performance['time'])))
@@ -71,7 +73,8 @@ def main():
             dest.write(source.read())
             source.close()
             dest.close()
-            print(domain + ' - ' + filename + ' - ' + str(result))
+            if result:
+                print(domain + ' - ' + filename)
 
 if __name__ == '__main__':
     load_data()
